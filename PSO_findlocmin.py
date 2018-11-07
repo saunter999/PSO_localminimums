@@ -92,7 +92,7 @@ def plotting(mls):
 
 
 if __name__=="__main__":
-	my_pso=PSO(pN=30,dim=1,max_iter=120)
+	my_pso=PSO(pN=30,dim=1,max_iter=150)
 	my_pso.init_Population()
 	fitness,pfitls,xls,locmins=my_pso.iterator()
 	figure(2)
@@ -104,3 +104,4 @@ if __name__=="__main__":
 	figure(4)
 	plotting(locmins)
 	show()
+	###
