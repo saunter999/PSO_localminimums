@@ -11,7 +11,7 @@ class PSO:
 	def __init__(self,pN,dim,max_iter):
 	    self.w=1.0
 	    self.wdamp=0.99
-	    self.c1=2.0
+	    self.c1=10.0
 	    self.c2=0.0
 	    self.pN=pN
 	    self.lb=-9.
@@ -27,7 +27,8 @@ class PSO:
 	
         #-----------target function---------#
 	def function(self,X): ##X is local
-	    return X*sin(X)+X*cos(2*X)  
+#	    return X*sin(X)+X*cos(2*X)  
+	    return (X**2-5*X)*sin(3.1*X) 
 
         #-----------PSO objects initialization---------#
 	def init_Population(self):
@@ -45,12 +46,10 @@ class PSO:
         #-------------PSO iteration-------------#
 	def iterator(self):
 	     locmin=[]
-	     xls=[]
 	     pfitls=[]
-	     fitness=[]
+	     xls=[]
 	     for i in range(self.max_iter):
 	         self.w=self.w*self.wdamp
-	 	 fitness.append(self.g_fit)
 		 pfitls.append(self.p_fit[0])
 		 tmp=self.pbest[0][0]
 		 xls.append(tmp)
@@ -74,11 +73,12 @@ class PSO:
 		         if self.X[j][k]>self.ub: self.X[j][k]=self.ub
 	     for i in range(self.pN):
 	         locmin.append(self.pbest[i][0])
-	     return fitness,pfitls,xls,locmin
+	     return pfitls,xls,locmin
 
 
-def function(x):
-	return x*sin(x)+x*cos(2*x)
+def function(X):
+#	return x*sin(x)+x*cos(2*x)
+	return (X**2-5*X)*sin(3.1*X) 
 
 def plotting(mls):
 	xs=linspace(-9,9,100)
@@ -92,16 +92,16 @@ def plotting(mls):
 
 
 if __name__=="__main__":
-	my_pso=PSO(pN=30,dim=1,max_iter=150)
+	my_pso=PSO(pN=30,dim=1,max_iter=500)
 	my_pso.init_Population()
-	fitness,pfitls,xls,locmins=my_pso.iterator()
+	pfitls,xls,locmins=my_pso.iterator()
+	figure(1)
+	title('personal_best y_0 vs iteration')
+	plot(range(my_pso.max_iter),pfitls,'o-')
 	figure(2)
-	title('personal_best y vs iteration')
-	plot(range(my_pso.max_iter),pfitls,'*-')
-	figure(3)
 	title('personal_best x_0 vs iteration')
-	plot(range(my_pso.max_iter),xls,'*-')
-	figure(4)
+	plot(range(my_pso.max_iter),xls,'o-')
+	figure(3)
 	plotting(locmins)
 	show()
 	###
