@@ -15,11 +15,12 @@ class PSO:
         #-----------PSO parameters and objects---------#
 	def __init__(self,pN,dim,max_iter):
 	    self.w=1.0
-	    self.wdamp=0.99
-	    self.c1=2.0
+   	    self.wdamp=0.99
+#  	    self.wdamp=1.0
+	    self.c1=10.0
 	    self.pN=pN
-	    self.lb=-12.
-	    self.ub=12.
+	    self.lb=-5.
+	    self.ub=5.
 	    self.dim=dim
 	    self.max_iter=max_iter
 	    self.X=zeros((self.pN,self.dim))     ## particle's positions and velocity 
@@ -28,6 +29,7 @@ class PSO:
 	    self.p_fit=zeros(self.pN)            ## particle's personal best fit
 	
 	def print_info(self):
+	    print "c1=",self.c1
 	    print "w=",self.w
 	    print "wdamp=",self.wdamp
 	    print "pN=",self.pN
@@ -38,13 +40,15 @@ class PSO:
 
         #-----------target function---------#
 	def function(self,X): ##X is local
-	    return X*sin(X)+X*cos(2*X)  
+#	    return X*sin(X)+X*cos(2*X)  
 #	    return (X**2-5*X)*sin(3.1*X) 
 # 	    return cos(14.5 * X - 0.3) + (X + 0.2) * X
 # 	    return X**2-4*X+3
 # 	    return (X**2-5*X)*sin(X) 
 #	    return LA.norm(X)**2
-
+ 	    return (X[0]**2+X[1]-11)**2+(X[0]+X[1]**2-7)**2     ## Himmelblau's function
+#	    return (4-2.1*X[0]**2+X[0]**4/3.0)*X[0]**2+X[0]*X[1]+(-4+4*X[1]**2)*X[1]**2   ##SIX-HUMP CAMEL FUNCTION,the function has six local minima, two of which are global.
+#            return ( (X[0]-1.)*(X[0]-2.))**2+( (X[1]-2.)*(X[1]-1.))**2
         #-----------PSO objects initialization---------#
 	def init_Population(self):
 	    for i in range(self.pN):
@@ -94,7 +98,7 @@ class PSO:
 
 
 if __name__=="__main__":
-	my_pso=PSO(pN=30,dim=1,max_iter=1000)
+	my_pso=PSO(pN=30,dim=2,max_iter=2000)
 	my_pso.print_info()
 	my_pso.init_Population()
 	p0fitls,x0ls,xlocmins=my_pso.iterator()
@@ -107,12 +111,19 @@ if __name__=="__main__":
 	title('personal_best x_0 vs iteration')
 	plot(range(my_pso.max_iter),x0ls,'o-',markersize=2)
 
-	xs=linspace(my_pso.lb,my_pso.ub,200)
-	ys=array([my_pso.function(x) for x in xs ])
 	if my_pso.dim==1:
+	  xs=linspace(my_pso.lb,my_pso.ub,200)
+	  ys=array([my_pso.function(x) for x in xs ])
 	  figure(0)
 	  plot(xs,ys,'o-',markersize=2)
 	  for xm in xlocmins:
 	    axvline(x=xm,c='r')
 	  savefig("PSO_Alllocalmins.png")
+	if my_pso.dim==2:
+	   figure(0)
+	   title("Local minimums (x,y) for z=f(x,y)")
+	   plot(my_pso.pbest[:,0],my_pso.pbest[:,1],'ro')
+	   xlabel('x',size='large')
+	   ylabel('y',size='large')
+	   savefig("PSO_Himmelblaufunc.png")
 	show()
